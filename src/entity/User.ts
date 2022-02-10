@@ -35,11 +35,11 @@ export class User {
   lastName: string;
 
   @Column({ nullable: true })
-  @IsDate()
+  // @IsDate()
   birthday: Date;
 
   @Column({ type: "varchar", unique: false, nullable: true })
-  @Length(8)
+  // @Length(8)
   phone: string;
 
   @Column({ type: "varchar", length: 100, nullable: true })
