@@ -18,8 +18,6 @@ createConnection()
   .then(async (connection) => {
     // create express app
     const app = express();
-    app.set("views", __dirname + "/src/views");
-    app.set("view engine", "ejs");
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({ extended: false }));
     app.use(cookieParser());
@@ -83,14 +81,6 @@ createConnection()
     app.get("/auth/facebook", passport.authenticate("facebook"));
 
     app.get(
-      "/auth/facebook/callback",
-      passport.authenticate("facebook", {
-        successRedirect: "/facebook-success",
-        failureRedirect: "/error",
-      })
-    );
-
-    app.get(
       "/auth/google",
       passport.authenticate("google", { scope: ["profile", "email"] })
     );
@@ -98,6 +88,14 @@ createConnection()
     app.get(
       "/auth/google/callback",
       passport.authenticate("google", {
+        failureRedirect: "/error",
+      })
+    );
+
+    app.get(
+      "/auth/facebook/callback",
+      passport.authenticate("facebook", {
+        successRedirect: "/facebook-success",
         failureRedirect: "/error",
       })
     );
