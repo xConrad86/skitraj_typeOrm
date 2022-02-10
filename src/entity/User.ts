@@ -1,6 +1,6 @@
-import {Entity, PrimaryGeneratedColumn, Column} from "typeorm";
+import {Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn} from "typeorm";
 import {Contains, IsInt, Length, IsEmail, IsDate, Min, Max} from "class-validator";
-
+import * as bcrypt from "bcryptjs";
 
 @Entity()
 export class User {
@@ -18,68 +18,86 @@ export class User {
 
     @Column({type: "varchar",
              length: 50,
-             nullable: false                
+             nullable: true                
             })
     password: string;
 
-    @Column({type: "varchar", length: 150})
-    firstName: string;
+    @Column({type: "varchar", length: 150, nullable: true})
+    first_name: string;
 
-    @Column({type: "varchar", length: 255})
-    lastName: string;
+    @Column({type: "varchar", length: 255, nullable: true })
+    last_name: string;
 
-    @Column()
+    @Column({nullable: true})
     @IsDate()
     birthday: Date;
 
     @Column({type: "varchar",              
-             unique: true })
+             unique: true,
+             nullable: true })
     @Length(8)
     phone: string;
 
     @Column({type: "varchar",
-            length: 100                        
+            length: 100,
+            nullable: true                        
     })    
     country: string;   
 
     @Column({type: "varchar",
-            length: 100                        
+            length: 100,
+            nullable: true                        
     })    
     city: string; 
     
     @Column({type: "varchar",
-             length: 255                        
+             length: 255,
+             nullable: true                        
     })    
     street: string; 
 
     @Column({type: "varchar",
-             length: 15
+             length: 15,
+             nullable: true
     })    
     postal_code: string; 
         
     @Column({type: "varchar",
              length: 15,
-             unique: true
+             unique: true,
+             nullable: true
     })    
     reset_link: string; 
     
     @Column({type: "boolean", 
-             default: false             
+             default: false,
+             nullable: true             
     })    
     is_admin: boolean; 
 
     @Column({type: "boolean", 
-        default: false             
+        default: false,
+        nullable: true             
     })    
     is_google_acc: boolean; 
 
     @Column({type: "boolean", 
-        default: false             
+        default: false,
+        nullable: true             
     })    
     is_facebook_acc: boolean; 
     
+    @CreateDateColumn()
+    created_at: Date;
+
+    @UpdateDateColumn()
+    updated_at: Date;
     
-    @Column({ type: 'timestamp', nullable: false })
-    created: Date;
-         
+    hashPassword() {
+        this.password = bcrypt.hashSync(this.password, 8);
+      }
+    
+    checkIfUnencryptedPasswordIsValid(unencryptedPassword: string) {
+        return bcrypt.compareSync(unencryptedPassword, this.password);
+      }
 }
