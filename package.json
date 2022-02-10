@@ -1,24 +1,31 @@
 {
-   "name": "new-typeorm-project",
-   "version": "0.0.1",
-   "description": "Awesome project developed with TypeORM.",
-   "devDependencies": {
-      "@types/node": "^8.10.66",
-      "ts-node": "^3.3.0",
-      "typescript": "^3.3.3333"
-   },
-   "dependencies": {
-      "bcryptjs": "^2.4.3",
-      "body-parser": "^1.18.1",
-      "class-validator": "^0.13.2",
-      "express": "^4.15.4",
-      "jsonwebtoken": "^8.5.1",
-      "pg": "^8.4.0",
-      "reflect-metadata": "^0.1.13",
-      "typeorm": "^0.2.41"
-   },
-   "scripts": {
-      "start": "ts-node src/index.ts",
-      "typeorm": "node --require ts-node/register ./node_modules/typeorm/cli.js"
-   }
+  "name": "new-typeorm-project",
+  "version": "0.0.1",
+  "description": "Awesome project developed with TypeORM.",
+  "devDependencies": {
+    "@types/node": "^8.10.66",
+    "ts-node": "^3.3.0",
+    "typescript": "^3.3.3333"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.18.1",
+    "class-validator": "^0.13.2",
+    "express": "^4.15.4",
+    "jsonwebtoken": "^8.5.1",
+    "pg": "^8.4.0",
+    "reflect-metadata": "^0.1.13",
+    "typeorm": "^0.2.41",
+    "cookie-parser": "^1.4.6",
+    "ejs": "^3.1.6",
+    "express-handlebars": "^6.0.2",
+    "express-session": "^1.17.2",
+    "passport": "^0.5.2",
+    "passport-facebook": "^3.0.0",
+    "passport-google-oauth": "^2.0.0"
+  },
+  "scripts": {
+    "start": "ts-node src/index.ts",
+    "typeorm": "node --require ts-node/register ./node_modules/typeorm/cli.js"
+  }
 }
