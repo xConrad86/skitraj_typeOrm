@@ -1,5 +1,19 @@
-import {Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn} from "typeorm";
-import {Contains, IsInt, Length, IsEmail, IsDate, Min, Max} from "class-validator";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from "typeorm";
+import {
+  Contains,
+  IsInt,
+  Length,
+  IsEmail,
+  IsDate,
+  Min,
+  Max,
+} from "class-validator";
 import * as bcrypt from "bcryptjs";
 
 @Entity()
@@ -7,7 +21,7 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: "varchar", length: 150, unique: true, nullable: true })
+  @Column({ type: "varchar", length: 150, unique: false, nullable: true })
   @IsEmail()
   email: string;
 
@@ -24,7 +38,7 @@ export class User {
   @IsDate()
   birthday: Date;
 
-  @Column({ type: "varchar", unique: true, nullable: true })
+  @Column({ type: "varchar", unique: false, nullable: true })
   @Length(8)
   phone: string;
 
@@ -40,7 +54,7 @@ export class User {
   @Column({ type: "varchar", length: 15, nullable: true })
   postal_code: string;
 
-  @Column({ type: "varchar", length: 15, unique: true, nullable: true })
+  @Column({ type: "varchar", length: 15, unique: false, nullable: true })
   reset_link: string;
 
   @Column({ type: "boolean", default: false, nullable: true })
@@ -51,18 +65,18 @@ export class User {
 
   @Column({ type: "boolean", default: false, nullable: true })
   is_facebook_acc: boolean;
-      
-  @CreateDateColumn()
-    created_at: Date;
 
-  @UpdateDateColumn()
+  @CreateDateColumn({ nullable: true })
+  created_at: Date;
+
+  @UpdateDateColumn({ nullable: true })
   updated_at: Date;
-    
+
   hashPassword() {
-        this.password = bcrypt.hashSync(this.password, 8);
+    this.password = bcrypt.hashSync(this.password, 8);
   }
-    
+
   checkIfUnencryptedPasswordIsValid(unencryptedPassword: string) {
-        return bcrypt.compareSync(unencryptedPassword, this.password);
+    return bcrypt.compareSync(unencryptedPassword, this.password);
   }
 }
