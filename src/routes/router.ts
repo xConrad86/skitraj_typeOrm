@@ -71,7 +71,7 @@ router.post("/users", async (req, res) => {
     await userRepository.save(user);
     res.send("User created");
   } catch (e) {
-    res.send("Username already in use");
+    res.send("E-mail already in use");
     return;
   }
 });
