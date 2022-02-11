@@ -101,7 +101,9 @@ router.get(
 router.get(
   "/auth/facebook/callback",
   passport.authenticate("facebook", {
+    // user successfully authenticated
     successRedirect: "/success-facebook",
+    // can't authenticate
     failureRedirect: "/error",
   })
 );
@@ -126,7 +128,7 @@ router.get("/success-facebook", async (req, res) => {
   }
 });
 
-// prints error message in a browser in case of authentication error
+// prints error message in a browser, in case of authentication error
 router.get("/error", (req, res) => res.send("error logging in"));
 
 // logout route, redirects to homepage
