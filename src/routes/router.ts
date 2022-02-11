@@ -38,6 +38,16 @@ router.post("/users", async (req, res) => {
   }
 });
 
+// update particular user
+router.put("/users/:userId", async (req, res) => {
+  const userRepository = getRepository(User);
+  res.send(
+    JSON.stringify(
+      await userRepository.update({ id: req.params.userId }, req.body)
+    )
+  );
+});
+
 // delete particular user
 router.delete("/users/:userId", async (req, res) => {
   const userRepository = getRepository(User);
