@@ -8,10 +8,10 @@ export class User {
   id: number;
 
   @Column({ type: "varchar", length: 150, unique: true, nullable: true })
-  @IsEmail()
+  @IsEmail()  
   email: string;
 
-  @Column({ type: "varchar", length: 50, nullable: true })
+  @Column({ type: "varchar", length: 150, nullable: true })
   password: string;
 
   @Column({ type: "varchar", length: 150, nullable: true })
@@ -20,8 +20,7 @@ export class User {
   @Column({ type: "varchar", length: 255, nullable: true })
   last_name: string;
 
-  @Column({ nullable: true })
-  @IsDate()
+  @Column({ nullable: true, type: 'timestamptz' })  
   birthday: Date;
 
   @Column({ type: "varchar", unique: true, nullable: true })
@@ -43,8 +42,8 @@ export class User {
   @Column({ type: "varchar", length: 15, unique: true, nullable: true })
   reset_link: string;
 
-  @Column()
-  @IsNotEmpty()
+  @Column({nullable: true })
+  //@IsNotEmpty()
   role: string;
 
   @Column({ type: "boolean", default: false, nullable: true })
@@ -54,7 +53,7 @@ export class User {
   is_facebook_acc: boolean;
       
   @CreateDateColumn()
-    created_at: Date;
+  created_at: Date;
 
   @UpdateDateColumn()
   updated_at: Date;

@@ -11,12 +11,11 @@ export const authenticateToken = (request: Request, response: Response, next: Ne
       jwtPayload = <any> jwt.verify(token, config.jwtSecret);
       request.locals.jwtPayload = jwtPayload;
     } catch (error) {         
-      request.status(401).send();
+        response.status(401).send();
       return;
     }
   
-    //The token is valid for 1 hour
-    //We want to send a new token on every request
+    //The token is valid for 1 hour    
     const { id, email } = jwtPayload;
     const newToken = jwt.sign({ id, email }, config.jwtSecret, {
       expiresIn: "1h"
