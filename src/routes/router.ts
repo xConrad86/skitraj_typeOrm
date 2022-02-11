@@ -7,19 +7,38 @@ import { User } from "../entity/User";
 // api reference
 const apiReference = `<pre>
 GET:
-  all users: /users
+
+  all users:
+    url: /users
+
   user by id: /users/:id
-  facebook login: /auth/facebook
-  google login: /auth/google
+
+  facebook (register,login):
+    url: /auth/facebook
+
+  google (register,login):
+    url: /auth/google
 
 POST:
-  create user: /users       body: {'email': 'aaa@gmail.com'}
+
+  create user normal password:
+    url: /users
+    body: {'email': 'normal@gmail.com', password: '12345'}
+
+  login normal password:
+    url: /auth/normal-password
+    body: {'email': 'normal@gmail.com', password: '12345'}
 
 PUT:
-  update user: /user/:id    body: {'firstName': 'John'}
+
+  update user:
+    url: /user/:id
+    body: {'firstName': 'John'}
 
 DELETE:
-  delete user by id: /users/:id
+
+  delete user by id:
+    url: /users/:id
 
   <pre>`;
 
@@ -54,6 +73,24 @@ router.post("/users", async (req, res) => {
   } catch (e) {
     res.send("Username already in use");
     return;
+  }
+});
+
+// login user using normal password
+router.post("/auth/normal-password", async (req, res) => {
+  const userRepository = getRepository(User);
+
+  const user: User = await userRepository.findOne({
+    email: req.body.email,
+    password: req.body.password,
+  });
+
+  if (user !== undefined) {
+    // user authenticated, log in him
+    res.send("Logging in...");
+  } else {
+    // user does not exist, access denied
+    res.send("Login denied...");
   }
 });
 
