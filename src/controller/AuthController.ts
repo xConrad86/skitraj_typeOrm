@@ -4,6 +4,7 @@ import {NextFunction, Request, Response} from "express";
 import * as jwt from "jsonwebtoken";
 import config from './../config/config'
 import {validate} from "class-validator";
+const nodemailer = require("nodemailer");
 
 export default class AuthController {
 
@@ -151,6 +152,33 @@ export default class AuthController {
     response.status(204).send();
   };
  
+  static resetPassword = async (request: Request, response: Response) => {                
+    const { email } = request.body;    
+    let user: User;                                
+    if(!email) {        
+        response.status(401).send("Please provide email.");
+        return;
+    }        
+    try {        
+              
+        const userRepository = getRepository(User)
+        user = await userRepository.findOneOrFail({ where: { email } });
+      
+        if(!user) {
+            response.status(401).send("Email not exist.");
+            return;            
+        } else {
+            //create token
+            const expiresIn = "10m";
+            const reset_link = jwt.sign({ user_id: user.id, email: user.email }, config.jwtSecret, { expiresIn });
+            await updateUser( user.id, { reset_link: reset_link });
+            sendEmail(email, reset_link);
+            response.status(200).json({ message: "Email has been sent." });
+        }
+    } catch (error) {
+        response.status(500).json({ errorMessage: error.message });
+    }      
+  }
 }
 
 async function createUser(email: string, response: Response){
@@ -170,6 +198,65 @@ async function createUser(email: string, response: Response){
     response.status(400).send("Cannot create user. Please check parameters.");
     return;
   }    
-  console.log("save returned user", user)
+  
   return user;
 }
+
+
+async function updateUser(request: Request, response: Response) {        
+  const id = request.params.id;              
+  const { password, reset_link } = request.body;
+
+  //Find user
+  const userRepository = getRepository(User);
+  let user;
+  try {
+    user = await userRepository.findOneOrFail(id);
+  } catch (error) {          
+    response.status(404).send("User not found");
+    return;
+  }
+      
+  user.hashPassword();
+  user.reset_link = reset_link;
+  const errors = await validate(user);
+  if (errors.length > 0) {
+    response.status(400).send(errors);
+    return;
+  }
+
+  //Try to safe, if fails, that means username already in use
+  try {
+    await userRepository.save(user);
+  } catch (e) {
+    response.status(409).send("Email already in use");
+    return;
+  }
+  
+  response.status(202).send();
+};
+
+
+async function sendEmail(user, token) { 
+  const clientURL = "http://localhost:3000"   
+  let transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 587,
+    secure: false, 
+    auth: {
+      user: 'skitrajTest@gmail.com', 
+      pass: 'axs7777KBS#', 
+    },
+  });  
+  // send mail with defined transport object
+  let info = await transporter.sendMail({
+    from: 'skitrajTest@gmail.com', // sender address
+    to: user, // list of receivers
+    subject: "Reset hasła SKITRAJ", // Subject line
+    text: "Utraciłeś hasło? kliknij w link poniżej:", // plain text body
+    html: `
+    <a href="${clientURL}/NewPass/${token}">${token}</a>
+  `
+  }); 
+  console.log("Message sent: %s", info.messageId);   
+}   

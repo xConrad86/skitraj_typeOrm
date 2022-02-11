@@ -47,68 +47,7 @@ router.get("/", (req, res) => {
   res.send(apiReference);
 });
 
-// get all users
-router.get("/users", async (req, res) => {
-  const userRepository = getRepository(User);
-  res.send(JSON.stringify(await userRepository.find()));
-});
 
-// get particular user by id
-router.get("/users/:userId", async (req, res) => {
-  const userRepository = getRepository(User);
-  res.send(JSON.stringify(await userRepository.findOne(req.params.userId)));
-});
-
-// create new user
-router.post("/users", async (req, res) => {
-  const userRepository = getRepository(User);
-  const { email } = req.body;
-  const user = new User();
-
-  user.email = email;
-
-  try {
-    await userRepository.save(user);
-    res.send("User created");
-  } catch (e) {
-    res.send("E-mail already in use");
-    return;
-  }
-});
-
-// login user using normal password
-router.post("/auth/normal-password", async (req, res) => {
-  const userRepository = getRepository(User);
-
-  const user: User = await userRepository.findOne({
-    email: req.body.email,
-    password: req.body.password,
-  });
-
-  if (user !== undefined) {
-    // user authenticated, log in him
-    res.send("Logging in...");
-  } else {
-    // user does not exist, access denied
-    res.send("Login denied...");
-  }
-});
-
-// update particular user
-router.put("/users/:userId", async (req, res) => {
-  const userRepository = getRepository(User);
-  res.send(
-    JSON.stringify(
-      await userRepository.update({ id: req.params.userId }, req.body)
-    )
-  );
-});
-
-// delete particular user
-router.delete("/users/:userId", async (req, res) => {
-  const userRepository = getRepository(User);
-  res.send(JSON.stringify(await userRepository.delete(req.params.userId)));
-});
 
 // order email and profile from google auth
 router.get(
