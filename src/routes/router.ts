@@ -4,9 +4,28 @@ const passport = require("passport");
 import { getRepository } from "typeorm";
 import { User } from "../entity/User";
 
+// api reference
+const apiReference = `<pre>
+GET:
+  all users: /users
+  user by id: /users/:id
+  facebook login: /auth/facebook
+  google login: /auth/google
+
+POST:
+  create user: /users     body: {'email': 'aaa@gmail.com'}
+
+PUT:
+  update user: /user/:id
+
+DELETE:
+  delete user by id: /users/:id
+
+  <pre>`;
+
 // homepage
 router.get("/", (req, res) => {
-  res.send("Hello world!");
+  res.send(apiReference);
 });
 
 // get all users
