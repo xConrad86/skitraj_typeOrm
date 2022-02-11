@@ -24,8 +24,8 @@ router.get("/users/:userId", async (req, res) => {
 // create new user
 router.post("/users", async (req, res) => {
   const userRepository = getRepository(User);
-  let { email } = req.body;
-  let user = new User();
+  const { email } = req.body;
+  const user = new User();
 
   user.email = email;
 
