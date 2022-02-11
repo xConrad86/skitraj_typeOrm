@@ -111,12 +111,11 @@ router.delete("/users/:userId", async (req, res) => {
 });
 
 // order email and profile from google auth
-router.get(
-  "/auth/google",
-  passport.authenticate("google", { scope: ["profile", "email"] })
-);
+router.get("/auth/external", (req, res) => {
+  passport.authenticate(req.body.authType, { scope: "email" });
+});
 
-// callback function from google
+// callback function
 router.get(
   "/auth/google/callback",
   passport.authenticate("google", {
@@ -128,7 +127,7 @@ router.get(
 );
 
 // prints successfully authenticated user in a browser
-router.get("/success-google", async (req, res) => {
+router.get("/auth-external", async (req, res) => {
   const userRepository = getRepository(User);
 
   const user: User = await userRepository.findOne({
@@ -146,12 +145,6 @@ router.get("/success-google", async (req, res) => {
     res.send("I had to create a user first. Logging in...");
   }
 });
-
-// order email and profile from facebook
-router.get(
-  "/auth/facebook",
-  passport.authenticate("facebook", { scope: "email" })
-);
 
 // callback function from facebook
 router.get(
