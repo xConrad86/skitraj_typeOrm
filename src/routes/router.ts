@@ -187,10 +187,4 @@ router.get("/success-facebook", async (req, res) => {
 // prints error message in a browser, in case of authentication error
 router.get("/error", (req, res) => res.send("error logging in"));
 
-// logout route, redirects to homepage
-router.get("/logout", function (req, res) {
-  req.logout();
-  res.redirect("/");
-});
-
 module.exports = router;
