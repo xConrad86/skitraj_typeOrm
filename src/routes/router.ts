@@ -13,10 +13,10 @@ GET:
   google login: /auth/google
 
 POST:
-  create user: /users     body: {'email': 'aaa@gmail.com'}
+  create user: /users       body: {'email': 'aaa@gmail.com'}
 
 PUT:
-  update user: /user/:id
+  update user: /user/:id    body: {'firstName': 'John'}
 
 DELETE:
   delete user by id: /users/:id
