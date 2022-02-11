@@ -1,7 +1,7 @@
 import "reflect-metadata";
 import { createConnection } from "typeorm";
 import routes from "./routes/routes";
-import config from "./config/config";
+
 //import {User} from "./entity/User";
 
 createConnection()
