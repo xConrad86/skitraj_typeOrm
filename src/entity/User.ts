@@ -1,5 +1,5 @@
 import {Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn} from "typeorm";
-import {Contains, IsInt, Length, IsEmail, IsDate, Min, Max} from "class-validator";
+import {Contains, IsInt, Length, IsEmail, IsDate, Min, Max, IsNotEmpty} from "class-validator";
 import * as bcrypt from "bcryptjs";
 
 @Entity()
@@ -15,10 +15,10 @@ export class User {
   password: string;
 
   @Column({ type: "varchar", length: 150, nullable: true })
-  firstName: string;
+  first_name: string;
 
   @Column({ type: "varchar", length: 255, nullable: true })
-  lastName: string;
+  last_name: string;
 
   @Column({ nullable: true })
   @IsDate()
@@ -43,8 +43,9 @@ export class User {
   @Column({ type: "varchar", length: 15, unique: true, nullable: true })
   reset_link: string;
 
-  @Column({ type: "boolean", default: false, nullable: true })
-  is_admin: boolean;
+  @Column()
+  @IsNotEmpty()
+  role: string;
 
   @Column({ type: "boolean", default: false, nullable: true })
   is_google_acc: boolean;
@@ -62,7 +63,7 @@ export class User {
         this.password = bcrypt.hashSync(this.password, 8);
   }
     
-  checkIfUnencryptedPasswordIsValid(unencryptedPassword: string) {
+  checkPasswordIsValid(unencryptedPassword: string) {
         return bcrypt.compareSync(unencryptedPassword, this.password);
   }
 }
