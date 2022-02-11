@@ -38,6 +38,12 @@ router.post("/users", async (req, res) => {
   }
 });
 
+// delete particular user
+router.delete("/users/:userId", async (req, res) => {
+  const userRepository = getRepository(User);
+  res.send(JSON.stringify(await userRepository.delete(req.params.userId)));
+});
+
 // order email and profile from google auth
 router.get(
   "/auth/google",
@@ -56,7 +62,24 @@ router.get(
 );
 
 // prints successfully authenticated user in a browser
-router.get("/success-google", (req, res) => res.send(req.user.emails[0].value));
+router.get("/success-google", async (req, res) => {
+  const userRepository = getRepository(User);
+
+  const user: User = await userRepository.findOne({
+    email: req.user.emails[0].value,
+  });
+
+  if (user !== undefined) {
+    // user already created, we can log in him
+    res.send("Logging in...");
+  } else {
+    // user does not exist, create him and log in afterwards
+    const user = new User();
+    user.email = req.user.emails[0].value;
+    await userRepository.save(user);
+    res.send("I had to create a user first. Logging in...");
+  }
+});
 
 // order email and profile from facebook
 router.get(
@@ -74,9 +97,24 @@ router.get(
 );
 
 // prints successfully authenticated user in a browser
-router.get("/success-facebook", (req, res) =>
-  res.send(req.user.emails[0].value)
-);
+router.get("/success-facebook", async (req, res) => {
+  const userRepository = getRepository(User);
+
+  const user: User = await userRepository.findOne({
+    email: req.user.emails[0].value,
+  });
+
+  if (user !== undefined) {
+    // user already created, we can log in him
+    res.send("Logging in...");
+  } else {
+    // user does not exist, create him and log in afterwards
+    const user = new User();
+    user.email = req.user.emails[0].value;
+    await userRepository.save(user);
+    res.send("I had to create a user first. Logging in...");
+  }
+});
 
 // prints error message in a browser in case of authentication error
 router.get("/error", (req, res) => res.send("error logging in"));
