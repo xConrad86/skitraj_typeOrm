@@ -13,7 +13,11 @@ export default class AuthController {
     response: Response,
     next: NextFunction
   ) => {
-    passport.authenticate(request.params.authProvider);
+    passport.authenticate(request.params.authProvider, { scope: "email" })(
+      request,
+      response,
+      next
+    );
   };
   static externalAuthCallback = async (
     request: Request,
@@ -21,9 +25,9 @@ export default class AuthController {
     next: NextFunction
   ) => {
     passport.authenticate(request.params.authProvider, {
-      successRedirect: `${request.params.authProvider}/login`,
+      successRedirect: `/auth/${request.params.authProvider}/login`,
       failureRedirect: "/error",
-    });
+    })(request, response, next);
   };
 
   static externalLogin = async (
@@ -31,6 +35,7 @@ export default class AuthController {
     response: Response,
     next: NextFunction
   ) => {
+    console.log(request);
     let { email } = request.emails[0].value;
     const userRepository = getRepository(User);
     let user: User;
