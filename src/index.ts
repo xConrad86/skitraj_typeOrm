@@ -12,8 +12,8 @@ createConnection()
       FacebookStrategy = require("passport-facebook").Strategy,
       GoogleStrategy = require("passport-google-oauth").OAuth2Strategy,
       session = require("express-session"),
-      bodyParser = require("body-parser"),
       cookieParser = require("cookie-parser"),
+      bodyParser = require("body-parser"),
       app = express();
     app.use(bodyParser.json());
     app.use(cookieParser());
@@ -48,10 +48,18 @@ createConnection()
       })
     );
 
-    // start express server
-    app.listen(3000);
     app.use(passport.initialize());
     app.use(passport.session());
+
+    // determines which data of the user object should be stored in a session
+    passport.serializeUser(function (user, done) {
+      done(null, user);
+    });
+
+    // used to retrieve user object from a session
+    passport.deserializeUser(function (obj, done) {
+      done(null, obj);
+    });
 
     // facebook login configuration
     passport.use(
@@ -82,16 +90,6 @@ createConnection()
       )
     );
 
-    // determines which data of the user object should be stored in a session
-    passport.serializeUser(function (user, done) {
-      done(null, user);
-    });
-
-    // used to retrieve user object from a session
-    passport.deserializeUser(function (obj, done) {
-      done(null, obj);
-    });
-
     // insert new users for test
     //   await connection.manager.save(connection.manager.create(User, {
     //       firstName: "Timber",
@@ -103,6 +101,9 @@ createConnection()
     //       lastName: "Assassin",
     //       age: 24
     //   }));
+
+    // start express server
+    app.listen(3000);
 
     console.log(
       "Express server has started on port 3000. Open http://localhost:3000/"

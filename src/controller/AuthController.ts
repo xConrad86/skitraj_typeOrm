@@ -13,11 +13,9 @@ export default class AuthController {
     response: Response,
     next: NextFunction
   ) => {
-    passport.authenticate(request.params.authProvider, { scope: "email" })(
-      request,
-      response,
-      next
-    );
+    passport.authenticate(request.params.authProvider, {
+      scope: "email",
+    })(request, response, next);
   };
   static externalAuthCallback = async (
     request: Request,
