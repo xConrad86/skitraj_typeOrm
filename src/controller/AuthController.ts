@@ -14,7 +14,6 @@ export default class AuthController {
     next: NextFunction
   ) => {
     passport.passport.authenticate(request.params.authProvider);
-    response.status(200).send();
   };
   static externalAuthCallback = async (
     request: Request,
