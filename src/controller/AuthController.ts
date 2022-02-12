@@ -35,7 +35,7 @@ export default class AuthController {
     response: Response,
     next: NextFunction
   ) => {
-    console.log(request.user.emails[0].value);
+    console.log(request.user);
     let { email } = request.user.emails[0].value;
     const userRepository = getRepository(User);
     let user: User;
