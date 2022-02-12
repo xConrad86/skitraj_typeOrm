@@ -17,7 +17,6 @@ createConnection()
       app = express();
     app.use(bodyParser.json());
     app.use(cookieParser());
-    app.use("/", routes);
 
     app.use(
       session({
@@ -36,7 +35,7 @@ createConnection()
           Note if you are using Session in conjunction with PassportJS, Passport will add an empty Passport object to the session
           for use after a user is authenticated, which will be treated as a modification to the session, causing it to be saved.
           This has been fixed in PassportJS 0.3.0 */
-        saveUninitialized: true,
+        saveUninitialized: false,
         /* This is the secret used to sign the session ID cookie. This can be either a string for a single secret, or an array
           of multiple secrets. If an array of secrets is provided, only the first element will be used to sign the session ID cookie,
           while all the elements will be considered when verifying the signature in requests. The secret itself should be not easily parsed
@@ -101,6 +100,9 @@ createConnection()
     //       lastName: "Assassin",
     //       age: 24
     //   }));
+
+    //routes
+    app.use(routes);
 
     // start express server
     app.listen(3000);
