@@ -115,7 +115,12 @@ router.get("/auth/google", (req, res) => {
   passport.authenticate("google", { scope: "email" });
 });
 
+// order email and profile from google auth
+router.get("/auth/facebook", (req, res) => {
+  passport.authenticate("facebook", { scope: "email" });
+});
 // callback function
+<<<<<<< Updated upstream
 router.get("/auth/:authProvider/callback", (req, res) => {
   passport.authenticate(req.params.authProvider, {
     // user successfully authenticated
@@ -143,6 +148,17 @@ router.get("/success-:authProvider", async (req, res) => {
     await userRepository.save(user);
     res.send("I had to create a user first. Logging in...");
   }
+=======
+router.get("/auth/google/callback", (req, res) => {
+  passport.authenticate("google");
+  console.log(req.user.emails[0].value);
+});
+
+// callback function from facebook
+router.get("/auth/facebook/callback", (req, res) => {
+  console.log(req.user.emails[0].value);
+  passport.authenticate("facebook");
+>>>>>>> Stashed changes
 });
 
 // prints error message in a browser, in case of authentication error
