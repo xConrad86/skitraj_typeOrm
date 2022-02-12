@@ -13,40 +13,39 @@ export default class AuthController {
     response: Response,
     next: NextFunction
   ) => {
-    console.log(request.params.authProvider);
-    passport.authenticate("facebook");
+    passport.passport.authenticate(request.params.authProvider);
+    response.status(200).send();
   };
-
   static externalAuthCallback = async (
     request: Request,
     response: Response,
     next: NextFunction
   ) => {
-    let { reqEmail } = request.user.emails[0].value;
+    passport.authenticate(request.params.authProvider, {
+      successRedirect: `${request.params.authProvider}/login`,
+      failureRedirect: "/error",
+    });
+  };
+
+  static externalLogin = async (
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ) => {
+    let { email } = request.emails[0].value;
     const userRepository = getRepository(User);
     let user: User;
 
-    if (!reqEmail) {
+    if (!email) {
       response.status(400).send();
       return;
     }
 
     try {
-      user = await userRepository.findOne({
-        email: reqEmail,
-      });
+      user = await userRepository.findOneOrFail({ where: { email } });
     } catch (error) {
       response.status(401).send("User not found");
       return;
-    }
-
-    if (!user) {
-      try {
-        user = await createUser(reqEmail, response);
-      } catch (error) {
-        response.status(401).send("User cannot be created." + error.message);
-        return;
-      }
     }
 
     // sign JWT, valid for 1 hour

@@ -9,6 +9,7 @@ router.post("/login", AuthController.login);
 router.post("/register", AuthController.register);
 router.get("/:authProvider", AuthController.externalAuthRequest);
 router.get("/:authProvider/callback", AuthController.externalAuthCallback);
+router.get("/:authProvider/login", AuthController.externalLogin);
 router.post(
   "/change-password",
   [authenticateToken],
