@@ -13,7 +13,7 @@ export default class AuthController {
     response: Response,
     next: NextFunction
   ) => {
-    passport.passport.authenticate(request.params.authProvider);
+    passport.authenticate(request.params.authProvider);
   };
   static externalAuthCallback = async (
     request: Request,
