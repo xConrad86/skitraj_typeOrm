@@ -111,8 +111,8 @@ router.delete("/users/:userId", async (req, res) => {
 });
 
 // order email and profile from google auth
-router.get("/auth/:authProvider", (req, res) => {
-  passport.authenticate(req.params.authProvider, { scope: "email" });
+router.get("/auth/google", (req, res) => {
+  passport.authenticate("google", { scope: "email" });
 });
 
 // callback function
