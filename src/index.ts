@@ -13,9 +13,12 @@ createConnection()
       GoogleStrategy = require("passport-google-oauth").OAuth2Strategy,
       session = require("express-session"),
       bodyParser = require("body-parser"),
+      cookieParser = require("cookie-parser"),
       app = express();
     app.use(bodyParser.json());
+    app.use(cookieParser());
     app.use("/", routes);
+
     app.use(
       session({
         /* Forces the session to be saved back to the session store, even if the session was never modified during the request.
@@ -33,7 +36,7 @@ createConnection()
           Note if you are using Session in conjunction with PassportJS, Passport will add an empty Passport object to the session
           for use after a user is authenticated, which will be treated as a modification to the session, causing it to be saved.
           This has been fixed in PassportJS 0.3.0 */
-        saveUninitialized: false,
+        saveUninitialized: true,
         /* This is the secret used to sign the session ID cookie. This can be either a string for a single secret, or an array
           of multiple secrets. If an array of secrets is provided, only the first element will be used to sign the session ID cookie,
           while all the elements will be considered when verifying the signature in requests. The secret itself should be not easily parsed
@@ -41,7 +44,7 @@ createConnection()
           ensuring the secret itself does not exist in your repository.
           Periodic updates of the secret, while ensuring the previous secret is in the array. Using a secret that cannot be guessed will
           reduce the ability to hijack a session to only guessing the session ID (as determined by the genid option).*/
-        secret: "rb96s&Ra{7*Ur>q=",
+        secret: "SECRET",
       })
     );
 

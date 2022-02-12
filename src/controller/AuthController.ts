@@ -36,7 +36,8 @@ export default class AuthController {
     next: NextFunction
   ) => {
     console.log(request.user);
-    let { email } = request.user.emails[0].value;
+    // let { email } = passport.session.user.emails[0].value;
+    let email = "lewapoel@gmail.com";
     const userRepository = getRepository(User);
     let user: User;
 
