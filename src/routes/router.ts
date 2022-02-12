@@ -111,54 +111,22 @@ router.delete("/users/:userId", async (req, res) => {
 });
 
 // order email and profile from google auth
-router.get("/auth/external", (req, res) => {
-  passport.authenticate(req.body.authType, { scope: "email" });
+router.get("/auth/:authProvider", (req, res) => {
+  passport.authenticate(req.params.authProvider, { scope: "email" });
 });
 
 // callback function
-router.get(
-  "/auth/google/callback",
-  passport.authenticate("google", {
+router.get("/auth/:authProvider/callback", (req, res) => {
+  passport.authenticate(req.params.authProvider, {
     // user successfully authenticated
-    successRedirect: "/success-google",
+    successRedirect: "/success-" + req.params.authProvider,
     // can't authenticate
     failureRedirect: "/error",
-  })
-);
-
-// prints successfully authenticated user in a browser
-router.get("/auth-external", async (req, res) => {
-  const userRepository = getRepository(User);
-
-  const user: User = await userRepository.findOne({
-    email: req.user.emails[0].value,
   });
-
-  if (user !== undefined) {
-    // user already created, we can log in him
-    res.send("Logging in...");
-  } else {
-    // user does not exist, create him and log in afterwards
-    const user = new User();
-    user.email = req.user.emails[0].value;
-    await userRepository.save(user);
-    res.send("I had to create a user first. Logging in...");
-  }
 });
 
-// callback function from facebook
-router.get(
-  "/auth/facebook/callback",
-  passport.authenticate("facebook", {
-    // user successfully authenticated
-    successRedirect: "/success-facebook",
-    // can't authenticate
-    failureRedirect: "/error",
-  })
-);
-
 // prints successfully authenticated user in a browser
-router.get("/success-facebook", async (req, res) => {
+router.get("/success-:authProvider", async (req, res) => {
   const userRepository = getRepository(User);
 
   const user: User = await userRepository.findOne({
