@@ -1,6 +1,7 @@
 import "reflect-metadata";
 import { createConnection } from "typeorm";
 import routes from "./routes/routes";
+import config from "./config/config";
 
 //import {User} from "./entity/User";
 
@@ -12,7 +13,6 @@ createConnection()
       GoogleStrategy = require("passport-google-oauth").OAuth2Strategy,
       session = require("express-session"),
       bodyParser = require("body-parser"),
-      config = require("./config/config"),
       app = express();
     app.use(bodyParser.json());
     app.use("/", routes);

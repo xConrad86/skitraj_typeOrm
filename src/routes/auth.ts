@@ -7,7 +7,12 @@ const router = Router();
 //Avaiable for all users
 router.post("/login", AuthController.login);
 router.post("/register", AuthController.register);
-router.post("/external-acc", [], AuthController.loginExternalAccount);
-router.post("/change-password", [authenticateToken], AuthController.changePassword);
+router.get("/:authProvider", AuthController.externalAuthRequest);
+router.get("/:authProvider/callback", AuthController.externalAuthCallback);
+router.post(
+  "/change-password",
+  [authenticateToken],
+  AuthController.changePassword
+);
 
 export default router;
