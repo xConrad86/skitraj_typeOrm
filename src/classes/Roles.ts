@@ -13,10 +13,10 @@ export const verifyRoles = (roles: Array<string>) => {
     try {
       user = await userRepository.findOneOrFail(id);
     } catch (id) {
-      response.status(401).send();
+      response.status(401).send("You are not authorized.");
     }
     //Check if array of authorized roles includes the user's role
     if (roles.indexOf(user.role) > -1) next();
-    else response.status(401).send();
+    else response.status(401).send("Role unknown.");
   };
 };

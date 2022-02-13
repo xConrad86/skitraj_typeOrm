@@ -1,10 +1,12 @@
-import { getRepository } from "typeorm";
+import { getRepository, PersistedEntityNotFoundError } from "typeorm";
 import { User } from "../entity/User";
 import { NextFunction, Request, Response } from "express";
 import * as jwt from "jsonwebtoken";
 import config from "../config/config";
 import { validate } from "class-validator";
-const nodemailer = require("nodemailer");
+import { sendEmail } from "../utils/functions";
+
+const bcrypt = require('bcryptjs');
 const passport = require("passport");
 
 export default class AuthController {
@@ -43,7 +45,10 @@ export default class AuthController {
     }
 
     try {
-      user = await userRepository.findOneOrFail({ where: { email } });
+      user = await userRepository.findOne({ where: { email } });
+      if(!user){
+        user = await createUserExternalService(email, response);
+      }
     } catch (error) {
       response.status(401).send("User not found");
       return;
@@ -53,7 +58,7 @@ export default class AuthController {
     const expiresIn = "1h";
     const token = jwt.sign(
       { user_id: user.id, email: user.email },
-      config.jwtSecret,
+      config.jwt_secret,
       { expiresIn }
     );
 
@@ -91,7 +96,7 @@ export default class AuthController {
     const expiresIn = "1h";
     const token = jwt.sign(
       { user_id: user.id, email: user.email },
-      config.jwtSecret,
+      config.jwt_secret,
       { expiresIn }
     );
 
@@ -143,18 +148,15 @@ export default class AuthController {
     response.status(201).send("User created");
   };
 
-  static changePassword = async (request: Request, response: Response) => {
-    //Get ID from JWT
-    const id = request.locals.jwtPayload.user_id;
-
-    //Get parameters from the body
+  static changePassword = async (request: Request, response: Response) => {    
+    const id = request.locals.jwtPayload.user_id;    
     const { oldPassword, newPassword } = request.body;
+
     if (!(oldPassword && newPassword)) {
       response.status(400).send();
       return;
     }
-
-    //Get user from the database
+    
     const userRepository = getRepository(User);
     let user: User;
     try {
@@ -163,24 +165,34 @@ export default class AuthController {
       response.status(401).send();
       return;
     }
-
-    //Check if old password matchs
+    
     if (!user.checkPasswordIsValid(oldPassword)) {
       response.status(401).send();
       return;
     }
+    
+    const errors = user.checkPassword(newPassword);
+    if(errors){
+      response.status(401).send(errors);
+      return;
+    } 
 
     user.password = newPassword;
-    const errors = await validate(user);
-    if (errors.length > 0) {
-      response.status(400).send(errors);
+    const validation_errors = await validate(user);
+    if (validation_errors.length > 0) {
+      response.status(400).send(validation_errors);
       return;
     }
-
+    
     user.hashPassword();
-    userRepository.save(user);
-
-    response.status(204).send();
+    try{
+      await userRepository.save(user);
+      response.status(204).send();
+    } catch (error){
+      response.status(401).send("Cannot update user.");
+      return;
+    }
+    
   };
 
   static resetPassword = async (request: Request, response: Response) => {
@@ -192,30 +204,49 @@ export default class AuthController {
     }
     try {
       const userRepository = getRepository(User);
+      console.log(email);
       user = await userRepository.findOneOrFail({ where: { email } });
-
       if (!user) {
         response.status(401).send("Email not exist.");
         return;
       } else {
         //create token
         const expiresIn = "10m";
-        const reset_link = jwt.sign(
-          { user_id: user.id, email: user.email },
-          config.jwtSecret,
-          { expiresIn }
-        );
-        await updateUser(user.id, { reset_link: reset_link });
-        sendEmail(email, reset_link);
+        const reset_link = jwt.sign({ user_id: user.id, email: user.email }, config.jwt_secret, { expiresIn });        
+        user.reset_link = reset_link;  
+        
+        try {          
+          await userRepository.save(user);
+        } catch (e) {
+          response.status(400).send("Cannot update user." + e.message);
+          return;
+        }
+        await sendEmail(email, reset_link);
         response.status(200).json({ message: "Email has been sent." });
       }
     } catch (error) {
-      response.status(500).json({ errorMessage: error.message });
+      response.status(500).json({ errorMessage: error.message });      
     }
   };
+
+  static resetPasswordToken = async (request: Request, response: Response) => {               
+    const reset_link = request.params.token;
+    const {password} = request.body; 
+    
+    console.log(password);
+          
+    try {       
+      await resetUserPassword(response, reset_link, password)
+    }
+    catch (error) {              
+      response.status(500).json({ message: error.message });
+      return;
+    }
+    
+  }          
 }
 
-async function createUser(email: string, response: Response) {
+async function createUserExternalService(email: string, response: Response) {
   let user = new User();
   user.email = email;
 
@@ -229,66 +260,51 @@ async function createUser(email: string, response: Response) {
     const userRepository = getRepository(User);
     await userRepository.save(user);
   } catch (e) {
-    response.status(400).send("Cannot create user. Please check parameters.");
+    response.status(400).send("Cannot create user." + e.message);
     return;
   }
 
   return user;
 }
 
-async function updateUser(request: Request, response: Response) {
-  const id = request.params.id;
-  const { password, reset_link } = request.body;
-
-  //Find user
-  const userRepository = getRepository(User);
+async function resetUserPassword(response: Response, reset_link: string, password: string){
   let user;
-  try {
-    user = await userRepository.findOneOrFail(id);
-  } catch (error) {
-    response.status(404).send("User not found");
+  let userRepository;
+  try {  
+    userRepository = getRepository(User);                             
+    user = await userRepository.findOne({ reset_link: reset_link });
+  } catch (error) {              
+    response.status(500).json({ message: error.message });
     return;
   }
-
-  user.hashPassword();
-  user.reset_link = reset_link;
-  const errors = await validate(user);
-  if (errors.length > 0) {
-    response.status(400).send(errors);
-    return;
+  
+  if(!user) {
+    response.status(401).json({ message: 'We could not find a match for this link' });    
+  } else {       
+    let errors = user.checkPassword(password)
+      
+    if(errors.length > 0 ){                            
+      response.status(400).json({message: 'Provided password has errors. Check below: \n' + errors.join("\n")})      
+    } else {                                    
+      //user.password = bcrypt.hashSync(password, 8),
+      user.password = password;      
+      user.reset_link = null         
+      const validation_errors = await validate(user);
+      if (validation_errors.length > 0) {
+        response.status(400).send(validation_errors);
+        return;
+      }     
+      user.hashPassword();                               
+      try{
+        await userRepository.save(user);        
+      } catch (error){
+        response.status(401).send("Cannot update user.");
+        return;
+      }        
+      response.status(200).json({ message: 'Password updated' });
+    }                                        
   }
+} 
+  
+  
 
-  //Try to safe, if fails, that means username already in use
-  try {
-    await userRepository.save(user);
-  } catch (e) {
-    response.status(409).send("Email already in use");
-    return;
-  }
-
-  response.status(202).send();
-}
-
-async function sendEmail(user, token) {
-  const clientURL = "http://localhost:3000";
-  let transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 587,
-    secure: false,
-    auth: {
-      user: "skitrajTest@gmail.com",
-      pass: "axs7777KBS#",
-    },
-  });
-  // send mail with defined transport object
-  let info = await transporter.sendMail({
-    from: "skitrajTest@gmail.com", // sender address
-    to: user, // list of receivers
-    subject: "Reset hasła SKITRAJ", // Subject line
-    text: "Utraciłeś hasło? kliknij w link poniżej:", // plain text body
-    html: `
-    <a href="${clientURL}/NewPass/${token}">${token}</a>
-  `,
-  });
-  console.log("Message sent: %s", info.messageId);
-}

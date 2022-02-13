@@ -1,5 +1,5 @@
 export default {
-  jwtSecret: "$k!tr$j2022",
+  jwt_secret: "$k!tr$j2022",
   facebook_api_key: "370128284511453",
   facebook_api_secret: "990d6577e84512ddba503a862c6afe4e",
   google_client_id:

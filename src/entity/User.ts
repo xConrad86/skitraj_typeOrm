@@ -7,7 +7,7 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: "varchar", length: 150, unique: true, nullable: true })
+  @Column({ type: "varchar", length: 150, unique: true, nullable: false })
   @IsEmail()  
   email: string;
 
@@ -39,7 +39,7 @@ export class User {
   @Column({ type: "varchar", length: 15, nullable: true })
   postal_code: string;
 
-  @Column({ type: "varchar", length: 15, unique: true, nullable: true })
+  @Column({ type: "varchar", length: 255, unique: true, nullable: true })
   reset_link: string;
 
   @Column({nullable: true })
@@ -65,4 +65,27 @@ export class User {
   checkPasswordIsValid(unencryptedPassword: string) {
         return bcrypt.compareSync(unencryptedPassword, this.password);
   }
+
+  checkPassword(password: string) {
+    let errors = [];
+    console.log("check pass", password)
+    if (password.length < 8) {
+        errors.push("Hasło powinno mieć conajmniej 8 znaków."); 
+    }
+    if (password.search(/[a-z]/i) < 0) {
+        errors.push("Hasło musi zawierać przynajmniej jedną małą literę.");
+    }
+    if (password.search(/[A-Z]/i) < 0) {
+      errors.push("Hasło powinno zawierać przynajmniej jedną dużą literę.");
+    }
+    if (password.search(/[0-9]/) < 0) {
+        errors.push("Hasło musi zawierać przynajmniej jedną liczbę."); 
+    }
+    if (password.search(/[!@#$%^&*]/) < 0) {
+        errors.push("Hasło powinno zawierać przynajmniej jeden znak specjalny."); 
+    }
+    
+    return errors;
+  }
+
 }
