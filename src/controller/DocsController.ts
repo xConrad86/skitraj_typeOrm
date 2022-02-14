@@ -3,6 +3,7 @@ import { NextFunction, Request, Response } from "express";
 const apiReference = `<pre>
 
 Note:
+
 Please use real e-mails in order to check reset-password functionality
 
 POST:
@@ -21,14 +22,18 @@ POST:
 
 PATCH:
 
-  reset password:
+  reset password (token = token from e-mail):
     url: /auth/reset-password/:token
-    header: 'Authorization': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJlbWFpbCI6Imxld2Fwb2VsQGdtYWlsLmNvbSIsImlhdCI6MTY0NDg0MDM4MSwiZXhwIjoxNjQ0ODQwOTgxfQ.RqDufEkBU6pv1CJjO8DWRZb7Djgt1GdIXSOD8JPFCEA'
+    header: 'Authorization': :token
     body: {'email': 'test@gmail.com', 'password': 'Skitraj=12#'}
 
 GET:
 
-  
+  facebook (register,login), try via browser:
+    url: /auth/facebook
+
+  google (register,login), try via browser:
+    url: /auth/google
 
   <pre>`;
 
