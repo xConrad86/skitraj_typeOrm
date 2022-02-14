@@ -16,7 +16,7 @@ POST:
     url: /auth/login
     body: {'email': 'test@gmail.com', password: 'Skitraj=12#'}
 
-  send e-mail reset password(check spam folder for email with token):
+  send e-mail reset password(check spam folder for e-mail with token):
     url: /auth/reset-password
     body: {'email': 'test@gmail.com'}
 
