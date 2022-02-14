@@ -1,24 +1,18 @@
 {
-   "type": "postgres",
-   "host": "md409176-001.eu.clouddb.ovh.net",
-   "port": 35590,
-   "username": "backendadmin",
-   "password": "321Skitraj123",
-   "database": "postgres",
-   "synchronize": true,
-   "logging": false,
-   "entities": [
-      "src/entity/**/*.ts"
-   ],
-   "migrations": [
-      "src/migration/**/*.ts"
-   ],
-   "subscribers": [
-      "src/subscriber/**/*.ts"
-   ],
-   "cli": {
-      "entitiesDir": "src/entity",
-      "migrationsDir": "src/migration",
-      "subscribersDir": "src/subscriber"
-   }
+  "type": "postgres",
+  "host": "md409176-001.eu.clouddb.ovh.net",
+  "port": 35590,
+  "username": "backendadmin",
+  "password": "321Skitraj123",
+  "database": "postgres",
+  "synchronize": true,
+  "logging": false,
+  "entities": ["src/entity/**/*.ts"],
+  "migrations": ["src/migration/**/*.ts"],
+  "subscribers": ["src/subscriber/**/*.ts"],
+  "cli": {
+    "entitiesDir": "src/entity",
+    "migrationsDir": "src/migration",
+    "subscribersDir": "src/subscriber"
+  }
 }
