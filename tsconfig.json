@@ -3,7 +3,7 @@
       "lib": [
          "es5",
          "es6"
-      ],
+      ],      
       "target": "es5",
       "module": "commonjs",
       "moduleResolution": "node",
@@ -17,6 +17,6 @@
    },
    "exclude": [
       "node_modules",
-      "dist"
+      "dist"     
     ]
 }
