@@ -8,8 +8,16 @@ const router = Router();
 router.post("/login", AuthController.login);
 router.post("/register", AuthController.register);
 router.post("/reset-password", AuthController.resetPassword);
-router.patch("/reset-password/:token", [authenticateToken], AuthController.resetPasswordToken);
-router.post("/change-password", [authenticateToken], AuthController.changePassword);
+router.patch(
+  "/reset-password/:token",
+  [authenticateToken],
+  AuthController.resetPasswordToken
+);
+router.post(
+  "/change-password",
+  [authenticateToken],
+  AuthController.changePassword
+);
 router.get("/:provider", AuthController.externalAuthRequest);
 router.get("/:provider/callback", AuthController.externalAuthCallback);
 router.get("/:provider/login", AuthController.externalLogin);

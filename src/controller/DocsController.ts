@@ -1,39 +1,34 @@
 import { NextFunction, Request, Response } from "express";
 
 const apiReference = `<pre>
-GET:
 
-  all users:
-    url: /users
-
-  user by id: /users/:id
-
-  facebook (register,login):
-    url: /auth/facebook
-
-  google (register,login):
-    url: /auth/google
+Note:
+Please use real e-mails in order to check reset-password functionality
 
 POST:
 
-  create user normal password:
-    url: /users
-    body: {'email': 'normal@gmail.com', password: '12345'}
+  normal register:
+    url: /auth/register
+    body: {'email': 'test@gmail.com', 'password': 'Skitraj=12#', 'phone': '123456789'}
 
-  login normal password:
-    url: /auth/normal-password
-    body: {'email': 'normal@gmail.com', password: '12345'}
+  normal login:
+    url: /auth/login
+    body: {'email': 'test@gmail.com', password: 'Skitraj=12#'}
 
-PUT:
+  send e-mail reset password(check spam folder for email with token):
+    url: /auth/reset-password
+    body: {'email': 'test@gmail.com'}
 
-  update user:
-    url: /user/:id
-    body: {'firstName': 'John'}
+PATCH:
 
-DELETE:
+  reset password:
+    url: /auth/reset-password/:token
+    header: 'Authorization': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJlbWFpbCI6Imxld2Fwb2VsQGdtYWlsLmNvbSIsImlhdCI6MTY0NDg0MDM4MSwiZXhwIjoxNjQ0ODQwOTgxfQ.RqDufEkBU6pv1CJjO8DWRZb7Djgt1GdIXSOD8JPFCEA'
+    body: {'email': 'test@gmail.com', 'password': 'Skitraj=12#'}
 
-  delete user by id:
-    url: /users/:id
+GET:
+
+
 
   <pre>`;
 
