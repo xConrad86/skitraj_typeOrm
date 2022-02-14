@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import { createConnection } from "typeorm";
-import routes from "./routes/routes";
+import Routes from "./routes/Routes";
 import config from "./config/config";
 
 //import {User} from "./entity/User";
@@ -16,7 +16,7 @@ createConnection()
       bodyParser = require("body-parser"),
       app = express();
     app.use(bodyParser.json());
-    app.use(cookieParser());
+    app.use(cookieParser());  
 
     app.use(
       session({
@@ -88,21 +88,14 @@ createConnection()
         }
       )
     );
-
-    // insert new users for test
-    //   await connection.manager.save(connection.manager.create(User, {
-    //       firstName: "Timber",
-    //       lastName: "Saw",
-    //       age: 27
-    //   }));
-    //   await connection.manager.save(connection.manager.create(User, {
-    //        firstName: "Phantom",
-    //       lastName: "Assassin",
-    //       age: 24
-    //   }));
-
+    app.use(function(req, res, next) {
+      res.header("Access-Control-Allow-Origin", "*");
+      res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+      res.header('Access-Control-Allow-Methods', 'PUT, PATCH, POST, GET, DELETE, OPTIONS');
+      next();
+    })  
     //routes
-    app.use(routes);
+    app.use(Routes);
 
     // start express server
     app.listen(3000);

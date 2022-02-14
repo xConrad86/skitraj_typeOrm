@@ -4,7 +4,8 @@ import { NextFunction, Request, Response } from "express";
 import * as jwt from "jsonwebtoken";
 import config from "../config/config";
 import { validate } from "class-validator";
-import { sendEmail } from "../utils/functions";
+import { sendEmail } from "../utils/Functions";
+import { Console } from "console";
 
 const bcrypt = require('bcryptjs');
 const passport = require("passport");
@@ -231,9 +232,7 @@ export default class AuthController {
 
   static resetPasswordToken = async (request: Request, response: Response) => {               
     const reset_link = request.params.token;
-    const {password} = request.body; 
-    
-    console.log(password);
+    const {password} = request.body;         
           
     try {       
       await resetUserPassword(response, reset_link, password)
@@ -270,6 +269,7 @@ async function createUserExternalService(email: string, response: Response) {
 async function resetUserPassword(response: Response, reset_link: string, password: string){
   let user;
   let userRepository;
+  
   try {  
     userRepository = getRepository(User);                             
     user = await userRepository.findOne({ reset_link: reset_link });
@@ -289,6 +289,8 @@ async function resetUserPassword(response: Response, reset_link: string, passwor
       //user.password = bcrypt.hashSync(password, 8),
       user.password = password;      
       user.reset_link = null         
+
+      console.log("validated user", user)
       const validation_errors = await validate(user);
       if (validation_errors.length > 0) {
         response.status(400).send(validation_errors);

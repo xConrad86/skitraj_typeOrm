@@ -1,5 +1,5 @@
 import {Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn} from "typeorm";
-import {Contains, IsInt, Length, IsEmail, IsDate, Min, Max, IsNotEmpty} from "class-validator";
+import {Contains, IsInt, Length, IsEmail, IsDate, Min, Max, IsNotEmpty, MaxLength, MinLength} from "class-validator";
 import * as bcrypt from "bcryptjs";
 
 @Entity()
@@ -7,11 +7,11 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: "varchar", length: 150, unique: true, nullable: false })
+  @Column({ type: "varchar", length: 150, unique: true, nullable: false})
   @IsEmail()  
   email: string;
 
-  @Column({ type: "varchar", length: 150, nullable: true })
+  @Column({ type: "varchar", length: 150, nullable: true,  select: false  })
   password: string;
 
   @Column({ type: "varchar", length: 150, nullable: true })
@@ -23,8 +23,9 @@ export class User {
   @Column({ nullable: true, type: 'timestamptz' })  
   birthday: Date;
 
-  @Column({ type: "varchar", unique: true, nullable: true })
-  @Length(8)
+  @Column({ type: "varchar", unique: true, nullable: true})  
+  @MaxLength(9)
+  @MinLength(9)
   phone: string;
 
   @Column({ type: "varchar", length: 100, nullable: true })

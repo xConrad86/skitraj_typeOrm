@@ -1,9 +1,9 @@
 {
    "type": "postgres",
-   "host": "md409176-001.eu.clouddb.ovh.net",
-   "port": 35590,
-   "username": "backendadmin",
-   "password": "321Skitraj123",
+   "host": "localhost",
+   "port": 5432,
+   "username": "postgres",
+   "password": "postgres",
    "database": "postgres",
    "synchronize": true,
    "logging": false,

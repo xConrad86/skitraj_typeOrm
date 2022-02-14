@@ -24,3 +24,7 @@ export async function sendEmail(user, token) {
     console.log("Message sent: %s", info.messageId);
   }
   
+  export function showError(text: string, msg: string){
+    return text + (msg ? " Error message: " + msg : "" )
+  }
+  

@@ -69,7 +69,7 @@ export default class UserController {
           return;
         }
       
-        //Try to safe, if fails, that means username already in use
+        //if failed that means username already in use
         try {
           await userRepository.save(user);
         } catch (e) {

@@ -3,11 +3,10 @@ import { getRepository } from "typeorm";
 import { User } from "../entity/User";
 
 export const verifyRoles = (roles: Array<string>) => {
-  return async (request: Request, response: Response, next: NextFunction) => {
-    //Get the user ID from previous midleware
+  return async (request: Request, response: Response, next: NextFunction) => {    
     const id = request.locals.jwtPayload.user_id;
 
-    //Get user role from the database
+    //User role from the database
     const userRepository = getRepository(User);
     let user: User;
     try {
