@@ -1,8 +1,8 @@
 import { Router } from "express";
-import DocsController from "../controller/UserController";
+import DocsController from "../controller/DocsController";
 
 const router = Router();
 
-router.get("/", DocsController.apiReference);
+router.get("/docs", DocsController.apiReference);
 
 export default router;
