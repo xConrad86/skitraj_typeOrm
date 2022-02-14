@@ -145,8 +145,8 @@ export default class AuthController {
       response.status(409).send("Email already in use" + e.message);
       return;
     }
-
-    response.status(201).send("User created");
+    let obj = user.toJSON()
+    response.status(201).send({obj});
   };
 
   static changePassword = async (request: Request, response: Response) => {    

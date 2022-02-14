@@ -1,6 +1,7 @@
 import {Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn} from "typeorm";
-import {Contains, IsInt, Length, IsEmail, IsDate, Min, Max, IsNotEmpty, MaxLength, MinLength} from "class-validator";
+import {IsEmail, MaxLength, MinLength} from "class-validator";
 import * as bcrypt from "bcryptjs";
+import { classToPlain, Exclude } from 'class-transformer';
 
 @Entity()
 export class User {
@@ -12,6 +13,7 @@ export class User {
   email: string;
 
   @Column({ type: "varchar", length: 150, nullable: true,  select: false  })
+  @Exclude()
   password: string;
 
   @Column({ type: "varchar", length: 150, nullable: true })
@@ -65,6 +67,10 @@ export class User {
     
   checkPasswordIsValid(unencryptedPassword: string) {
         return bcrypt.compareSync(unencryptedPassword, this.password);
+  }
+
+  toJSON() {
+    return classToPlain(this);
   }
 
   checkPassword(password: string) {
