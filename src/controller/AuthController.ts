@@ -136,13 +136,20 @@ export default class AuthController {
       return;
     }
 
+    let errors_pass = user.checkPassword(password)
+      
+    if(errors_pass.length > 0 ){                            
+      response.status(400).json({message: 'Provided password has errors. Check below: \n' + errors_pass.join("\n")}) 
+      return;
+    }     
+
     user.hashPassword();
 
     try {
       const userRepository = getRepository(User);
       await userRepository.save(user);
     } catch (e) {
-      response.status(409).send("Email already in use" + e.message);
+      response.status(409).send(e.message);
       return;
     }
     let obj = user.toJSON()

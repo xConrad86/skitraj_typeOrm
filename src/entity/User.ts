@@ -79,10 +79,10 @@ export class User {
     if (password.length < 8) {
         errors.push("Hasło powinno mieć conajmniej 8 znaków."); 
     }
-    if (password.search(/[a-z]/i) < 0) {
+    if (password.search(/[a-z]/g) < 0) {
         errors.push("Hasło musi zawierać przynajmniej jedną małą literę.");
     }
-    if (password.search(/[A-Z]/i) < 0) {
+    if (password.search(/[A-Z]/g) < 0) {
       errors.push("Hasło powinno zawierać przynajmniej jedną dużą literę.");
     }
     if (password.search(/[0-9]/) < 0) {
