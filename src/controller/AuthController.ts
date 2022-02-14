@@ -5,9 +5,7 @@ import * as jwt from "jsonwebtoken";
 import config from "../config/config";
 import { validate } from "class-validator";
 import { sendEmail } from "../utils/Functions";
-import { Console } from "console";
 
-const bcrypt = require('bcryptjs');
 const passport = require("passport");
 
 export default class AuthController {

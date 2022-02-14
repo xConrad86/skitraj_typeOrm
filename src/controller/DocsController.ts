@@ -43,6 +43,6 @@ export default class DocsController {
     response: Response,
     next: NextFunction
   ) => {
-    response.status(400).send(apiReference);
+    response.status(200).send(apiReference);
   };
 }

@@ -3,6 +3,6 @@ import DocsController from "../controller/DocsController";
 
 const router = Router();
 
-router.get("/docs", DocsController.apiReference);
+router.get("/api", DocsController.apiReference);
 
 export default router;
