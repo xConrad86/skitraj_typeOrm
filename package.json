@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@types/bcryptjs": "^2.4.2",
+    "@types/validator": "^13.7.1",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.1",
     "class-transformer": "^0.5.1",
@@ -25,10 +26,13 @@
     "passport-google-oauth": "^2.0.0",
     "pg": "^8.4.0",
     "reflect-metadata": "^0.1.13",
+    "ts-node-dev": "^1.1.8",
     "typeorm": "^0.2.41"
   },
   "scripts": {
-    "server": "ts-node src/index.ts",
+    "clean": "tsc --build --clean",
+    "build": "tsc --project ./tsconfig.json",
+    "server": "ts-node-dev src/index.ts",
     "typeorm": "node --require ts-node/register ./node_modules/typeorm/cli.js"
   }
 }
