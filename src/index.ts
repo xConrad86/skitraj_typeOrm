@@ -98,10 +98,10 @@ createConnection()
     app.use(Routes);
 
     // start express server
-    app.listen(3000);
+    app.listen(8000);
 
     console.log(
-      "Express server has started on port 3000. Open http://localhost:3000/"
+      "Express server has started on port 8000. Open http://localhost:8000/"
     );
   })
   .catch((error) => console.log(error));

@@ -14,7 +14,7 @@ export default class AuthController {
     response: Response,
     next: NextFunction
   ) => {
-    passport.authenticate(request.params.authProvider, {
+    passport.authenticate(request.params.provider, {
       scope: "email",
     })(request, response, next);
   };
@@ -23,8 +23,8 @@ export default class AuthController {
     response: Response,
     next: NextFunction
   ) => {
-    passport.authenticate(request.params.authProvider, {
-      successRedirect: `/auth/${request.params.authProvider}/login`,
+    passport.authenticate(request.params.provider, {
+      successRedirect: `/auth/${request.params.provider}/login`,
       failureRedirect: "/error",
     })(request, response, next);
   };
