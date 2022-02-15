@@ -34,7 +34,7 @@ export default class AuthController {
     response: Response,
     next: NextFunction
   ) => {
-    let email = request.user.emails[0];
+    let email = request.user.emails[0].value;
     const userRepository = getRepository(User);
     let user: User;
 
@@ -44,16 +44,20 @@ export default class AuthController {
     }
 
     try {
-      user = (await userRepository.findOne({ where: { email } })) as User;
-      if (!user) {
-        user = (await createUserExternalService(email, response)) as User;
+      user = (await userRepository.findOne({ where: { email } })) as User;      
+      if (user === undefined) {
+        user = (await createUserExternalService(email, response)) as User;  
+        if(!user){
+          return 
+        }      
       }
     } catch (error) {
       response.status(401).send("User not found");
       return;
-    }
+    }   
 
     // sign JWT, valid for 1 hour
+    //do ustalenia, czy google\, facebook odpowiada za sesje
     const expiresIn = "1h";
     const token = jwt.sign(
       { user_id: user.id, email: user.email },
@@ -256,23 +260,25 @@ export default class AuthController {
 
 async function createUserExternalService(email: string, response: Response) {
   let user = new User();
+  let db_user: User;
   user.email = email;
-
+  
   const errors = await validate(user);
   if (errors.length > 0) {
-    response.status(400).send("Cannot create user. Please check parameters.");
+    response.status(400).send("Cannot create user. Please check parameters." + errors);
     return;
   }
 
   try {
     const userRepository = getRepository(User);
-    await userRepository.save(user);
-  } catch (e) {
-    response.status(400).send("Cannot create user." + e);
+    db_user = await userRepository.save(user);
+  } catch (error) {
+    console.log(error);
+    response.status(400).send("Cannot create user." + error);
     return;
   }
-
-  return user;
+  
+  return db_user;
 }
 
 async function resetUserPassword(

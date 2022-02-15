@@ -3,6 +3,7 @@ import { createConnection } from "typeorm";
 import Routes from "./routes/Routes";
 import config from "./config/config";
 import { Request, Response, NextFunction } from "express";
+import { AnyAaaaRecord } from "dns";
 
 //import {User} from "./entity/User";
 
@@ -52,25 +53,27 @@ createConnection()
     app.use(passport.session());
 
     // determines which data of the user object should be stored in a session
-    passport.serializeUser(function (user: Request, done: any) {
+    passport.serializeUser(function (user: any, done: any) {      
       done(null, user);
     });
 
     // used to retrieve user object from a session
-    passport.deserializeUser(function (obj: Request, done: any) {
+    passport.deserializeUser(function (obj: any, done: any) {
       done(null, obj);
     });
 
     // facebook login configuration
     passport.use(
       new FacebookStrategy(
-        {
+        {         
           clientID: config.facebook_api_key,
           clientSecret: config.facebook_api_secret,
           callbackURL: config.facebook_callback_url,
           profileFields: ["emails"],
+
+
         },
-        function (profile: Object, done: any) {
+        function ( accessToken: string, refreshToken: string, profile: Object, done: any) {
           return done(null, profile);
         }
       )
@@ -79,12 +82,12 @@ createConnection()
     // gooogle login configuration
     passport.use(
       new GoogleStrategy(
-        {
+        {        
           clientID: config.google_client_id,
           clientSecret: config.google_client_secret,
-          callbackURL: config.google_callback_url,
+          callbackURL: config.google_callback_url,         
         },
-        function (profile: Object, done: any) {
+        function ( accessToken: string, refreshToken: string,profile: Object, done: any) {          
           return done(null, profile);
         }
       )

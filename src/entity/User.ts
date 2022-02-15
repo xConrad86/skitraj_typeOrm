@@ -18,8 +18,7 @@ export class User {
   @IsEmail()
   email!: string;
 
-  @Column({ type: "varchar", length: 150, nullable: true})
-  //@Exclude()
+  @Column({ type: "varchar", length: 150, nullable: true})  
   password!: string;
 
   @Column({ type: "varchar", length: 150, nullable: true })
@@ -31,9 +30,8 @@ export class User {
   @Column({ nullable: true, type: "timestamptz" })
   birthday!: Date;
 
-  @Column({ type: "varchar", unique: true, nullable: true })
-  @MaxLength(9)
-  @MinLength(9)
+  @Column({ type: "varchar", unique: true, nullable: true, length: 9 })
+
   phone!: string;
 
   @Column({ type: "varchar", length: 100, nullable: true })
