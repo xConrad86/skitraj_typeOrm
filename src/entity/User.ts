@@ -18,8 +18,8 @@ export class User {
   @IsEmail()
   email!: string;
 
-  @Column({ type: "varchar", length: 150, nullable: true, select: false })
-  @Exclude()
+  @Column({ type: "varchar", length: 150, nullable: true})
+  //@Exclude()
   password!: string;
 
   @Column({ type: "varchar", length: 150, nullable: true })

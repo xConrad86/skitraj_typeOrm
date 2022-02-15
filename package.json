@@ -1,7 +1,7 @@
 {
   "name": "new-typeorm-project",
   "version": "0.0.1",
-  "description": "Awesome project developed with TypeORM.",
+  "description": "Skitraj backend - typeOrm",
   "devDependencies": {
     "@types/express": "^4.17.13",
     "@types/jsonwebtoken": "^8.5.8",
