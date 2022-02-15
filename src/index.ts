@@ -52,12 +52,12 @@ createConnection()
     app.use(passport.session());
 
     // determines which data of the user object should be stored in a session
-    passport.serializeUser(function (user: Request, done: Function) {
+    passport.serializeUser(function (user: Request, done: any) {
       done(null, user);
     });
 
     // used to retrieve user object from a session
-    passport.deserializeUser(function (obj: Request, done: Function) {
+    passport.deserializeUser(function (obj: Request, done: any) {
       done(null, obj);
     });
 
@@ -70,7 +70,7 @@ createConnection()
           callbackURL: config.facebook_callback_url,
           profileFields: ["emails"],
         },
-        function (profile: Object, done: Function) {
+        function (profile: Object, done: any) {
           return done(null, profile);
         }
       )
@@ -84,7 +84,7 @@ createConnection()
           clientSecret: config.google_client_secret,
           callbackURL: config.google_callback_url,
         },
-        function (profile: Object, done: Function) {
+        function (profile: Object, done: any) {
           return done(null, profile);
         }
       )
