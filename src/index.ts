@@ -2,6 +2,7 @@ import "reflect-metadata";
 import { createConnection } from "typeorm";
 import Routes from "./routes/Routes";
 import config from "./config/config";
+import { Request, Response, NextFunction } from "express";
 
 //import {User} from "./entity/User";
 
@@ -16,7 +17,7 @@ createConnection()
       bodyParser = require("body-parser"),
       app = express();
     app.use(bodyParser.json());
-    app.use(cookieParser());  
+    app.use(cookieParser());
 
     app.use(
       session({
@@ -51,12 +52,12 @@ createConnection()
     app.use(passport.session());
 
     // determines which data of the user object should be stored in a session
-    passport.serializeUser(function (user, done) {
+    passport.serializeUser(function (user: Request, done: Function) {
       done(null, user);
     });
 
     // used to retrieve user object from a session
-    passport.deserializeUser(function (obj, done) {
+    passport.deserializeUser(function (obj: Request, done: Function) {
       done(null, obj);
     });
 
@@ -69,7 +70,7 @@ createConnection()
           callbackURL: config.facebook_callback_url,
           profileFields: ["emails"],
         },
-        function (accessToken, refreshToken, profile, done) {
+        function (profile: Object, done: Function) {
           return done(null, profile);
         }
       )
@@ -83,17 +84,23 @@ createConnection()
           clientSecret: config.google_client_secret,
           callbackURL: config.google_callback_url,
         },
-        function (accessToken, refreshToken, profile, done) {
+        function (profile: Object, done: Function) {
           return done(null, profile);
         }
       )
     );
-    app.use(function(req, res, next) {
+    app.use(function (req: Request, res: Response, next: NextFunction) {
       res.header("Access-Control-Allow-Origin", "*");
-      res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-      res.header('Access-Control-Allow-Methods', 'PUT, PATCH, POST, GET, DELETE, OPTIONS');
+      res.header(
+        "Access-Control-Allow-Headers",
+        "Origin, X-Requested-With, Content-Type, Accept"
+      );
+      res.header(
+        "Access-Control-Allow-Methods",
+        "PUT, PATCH, POST, GET, DELETE, OPTIONS"
+      );
       next();
-    })  
+    });
     //routes
     app.use(Routes);
 

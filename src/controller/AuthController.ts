@@ -8,6 +8,17 @@ import { sendEmail } from "../utils/Functions";
 
 const passport = require("passport");
 
+declare global {
+  namespace Express {
+    interface Request {
+      //for external auth
+      user: Record<string, any>;
+      //for jwtToken
+      locals: Record<string, any>;
+    }
+  }
+}
+
 export default class AuthController {
   static externalAuthRequest = async (
     request: Request,
@@ -34,7 +45,7 @@ export default class AuthController {
     response: Response,
     next: NextFunction
   ) => {
-    let email = request.user.emails[0].value;
+    let email = request.user.emails[0];
     const userRepository = getRepository(User);
     let user: User;
 
@@ -44,9 +55,9 @@ export default class AuthController {
     }
 
     try {
-      user = await userRepository.findOne({ where: { email } });
-      if(!user){
-        user = await createUserExternalService(email, response);
+      user = (await userRepository.findOne({ where: { email } })) as User;
+      if (!user) {
+        user = (await createUserExternalService(email, response)) as User;
       }
     } catch (error) {
       response.status(401).send("User not found");
@@ -110,14 +121,13 @@ export default class AuthController {
     let { email, password, phone, birthday } = request.body;
     let birthday_parsed;
     let user = new User();
-    //console.log(request, response);
     if (birthday) {
       try {
-        birthday_parsed = new Date(Date.parse(birthday));
+        birthday_parsed = new Date(birthday);
       } catch (error) {
         response
           .status(400)
-          .send("Wrong date format. Should be 'YYYY-MM-DD'" + error.message);
+          .send("Wrong date format. Should be 'YYYY-MM-DD'" + error);
         return;
       }
     }
@@ -125,7 +135,7 @@ export default class AuthController {
     user.email = email;
     user.password = password;
     user.phone = phone;
-    user.birthday = birthday_parsed;
+    user.birthday = birthday_parsed as Date;
 
     const errors = await validate(user);
     console.log(user, errors);
@@ -134,12 +144,16 @@ export default class AuthController {
       return;
     }
 
-    let errors_pass = user.checkPassword(password)
-      
-    if(errors_pass.length > 0 ){                            
-      response.status(400).json({message: 'Provided password has errors. Check below: \n' + errors_pass.join("\n")}) 
+    let errors_pass = user.checkPassword(password);
+
+    if (errors_pass.length > 0) {
+      response.status(400).json({
+        message:
+          "Provided password has errors. Check below: \n" +
+          errors_pass.join("\n"),
+      });
       return;
-    }     
+    }
 
     user.hashPassword();
 
@@ -147,22 +161,22 @@ export default class AuthController {
       const userRepository = getRepository(User);
       await userRepository.save(user);
     } catch (e) {
-      response.status(409).send(e.message);
+      response.status(409).send(e);
       return;
     }
-    let obj = user.toJSON()
-    response.status(201).send({obj});
+    let obj = user.toJSON();
+    response.status(201).send({ obj });
   };
 
-  static changePassword = async (request: Request, response: Response) => {    
-    const id = request.locals.jwtPayload.user_id;    
+  static changePassword = async (request: Request, response: Response) => {
+    const id = request.locals.jwtPayload.user_id;
     const { oldPassword, newPassword } = request.body;
 
     if (!(oldPassword && newPassword)) {
       response.status(400).send();
       return;
     }
-    
+
     const userRepository = getRepository(User);
     let user: User;
     try {
@@ -171,17 +185,17 @@ export default class AuthController {
       response.status(401).send();
       return;
     }
-    
+
     if (!user.checkPasswordIsValid(oldPassword)) {
       response.status(401).send();
       return;
     }
-    
+
     const errors = user.checkPassword(newPassword);
-    if(errors){
+    if (errors) {
       response.status(401).send(errors);
       return;
-    } 
+    }
 
     user.password = newPassword;
     const validation_errors = await validate(user);
@@ -189,16 +203,15 @@ export default class AuthController {
       response.status(400).send(validation_errors);
       return;
     }
-    
+
     user.hashPassword();
-    try{
+    try {
       await userRepository.save(user);
       response.status(204).send();
-    } catch (error){
+    } catch (error) {
       response.status(401).send("Cannot update user.");
       return;
     }
-    
   };
 
   static resetPassword = async (request: Request, response: Response) => {
@@ -218,36 +231,38 @@ export default class AuthController {
       } else {
         //create token
         const expiresIn = "10m";
-        const reset_link = jwt.sign({ user_id: user.id, email: user.email }, config.jwt_secret, { expiresIn });        
-        user.reset_link = reset_link;  
-        
-        try {          
+        const reset_link = jwt.sign(
+          { user_id: user.id, email: user.email },
+          config.jwt_secret,
+          { expiresIn }
+        );
+        user.reset_link = reset_link;
+
+        try {
           await userRepository.save(user);
         } catch (e) {
-          response.status(400).send("Cannot update user." + e.message);
+          response.status(400).send("Cannot update user." + e);
           return;
         }
         await sendEmail(email, reset_link);
         response.status(200).json({ message: "Email has been sent." });
       }
     } catch (error) {
-      response.status(500).json({ errorMessage: error.message });      
+      response.status(500).json({ errorMessage: error });
     }
   };
 
-  static resetPasswordToken = async (request: Request, response: Response) => {               
+  static resetPasswordToken = async (request: Request, response: Response) => {
     const reset_link = request.params.token;
-    const {password} = request.body;         
-          
-    try {       
-      await resetUserPassword(response, reset_link, password)
-    }
-    catch (error) {              
-      response.status(500).json({ message: error.message });
+    const { password } = request.body;
+
+    try {
+      await resetUserPassword(response, reset_link, password);
+    } catch (error) {
+      response.status(500).json({ message: error });
       return;
     }
-    
-  }          
+  };
 }
 
 async function createUserExternalService(email: string, response: Response) {
@@ -264,54 +279,60 @@ async function createUserExternalService(email: string, response: Response) {
     const userRepository = getRepository(User);
     await userRepository.save(user);
   } catch (e) {
-    response.status(400).send("Cannot create user." + e.message);
+    response.status(400).send("Cannot create user." + e);
     return;
   }
 
   return user;
 }
 
-async function resetUserPassword(response: Response, reset_link: string, password: string){
+async function resetUserPassword(
+  response: Response,
+  reset_link: string,
+  password: string
+) {
   let user;
   let userRepository;
-  
-  try {  
-    userRepository = getRepository(User);                             
+
+  try {
+    userRepository = getRepository(User);
     user = await userRepository.findOne({ reset_link: reset_link });
-  } catch (error) {              
-    response.status(500).json({ message: error.message });
+  } catch (error) {
+    response.status(500).json({ message: error });
     return;
   }
-  
-  if(!user) {
-    response.status(401).json({ message: 'We could not find a match for this link' });    
-  } else {       
-    let errors = user.checkPassword(password)
-      
-    if(errors.length > 0 ){                            
-      response.status(400).json({message: 'Provided password has errors. Check below: \n' + errors.join("\n")})      
-    } else {                                    
-      //user.password = bcrypt.hashSync(password, 8),
-      user.password = password;      
-      user.reset_link = null         
 
-      console.log("validated user", user)
+  if (!user) {
+    response
+      .status(401)
+      .json({ message: "We could not find a match for this link" });
+  } else {
+    let errors = user.checkPassword(password);
+
+    if (errors.length > 0) {
+      response.status(400).json({
+        message:
+          "Provided password has errors. Check below: \n" + errors.join("\n"),
+      });
+    } else {
+      //user.password = bcrypt.hashSync(password, 8),
+      user.password = password;
+      user.reset_link = "";
+
+      console.log("validated user", user);
       const validation_errors = await validate(user);
       if (validation_errors.length > 0) {
         response.status(400).send(validation_errors);
         return;
-      }     
-      user.hashPassword();                               
-      try{
-        await userRepository.save(user);        
-      } catch (error){
+      }
+      user.hashPassword();
+      try {
+        await userRepository.save(user);
+      } catch (error) {
         response.status(401).send("Cannot update user.");
         return;
-      }        
-      response.status(200).json({ message: 'Password updated' });
-    }                                        
+      }
+      response.status(200).json({ message: "Password updated" });
+    }
   }
-} 
-  
-  
-
+}

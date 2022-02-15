@@ -58,7 +58,9 @@ export default class UserController {
     next: NextFunction
   ) => {
     const userRepository = getRepository(User);
-    let userToRemove = await userRepository.findOne(request.params.id);
+    let userToRemove = (await userRepository.findOne(
+      request.params.id
+    )) as User;
     await userRepository.remove(userToRemove);
   };
 
