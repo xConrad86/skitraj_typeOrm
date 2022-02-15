@@ -8,17 +8,6 @@ import { sendEmail } from "../utils/Functions";
 
 const passport = require("passport");
 
-declare global {
-  namespace Express {
-    interface Request {
-      //for external auth
-      user: Record<string, any>;
-      //for jwtToken
-      locals: Record<string, any>;
-    }
-  }
-}
-
 export default class AuthController {
   static externalAuthRequest = async (
     request: Request,
