@@ -10,22 +10,22 @@ POST:
 
   normal register:
     url: /auth/register
-    body: {'email': 'test@gmail.com', 'password': 'Skitraj=12#', 'phone': '123456789'}
+    body: {"email": "test@gmail.com", "password": "Skitraj=12#", "phone": "123456789"}
 
   normal login:
     url: /auth/login
-    body: {'email': 'test@gmail.com', password: 'Skitraj=12#'}
+    body: {"email": "test@gmail.com", password: "Skitraj=12#"}
 
   send e-mail reset password(check spam folder for e-mail with token):
     url: /auth/reset-password
-    body: {'email': 'test@gmail.com'}
+    body: {"email": "test@gmail.com"}
 
 PATCH:
 
   reset password (token = token from e-mail):
     url: /auth/reset-password/:token
-    header: 'Authorization': :token
-    body: {'email': 'test@gmail.com', 'password': 'Skitraj=12#'}
+    header: "Authorization": :token
+    body: {"email": "test@gmail.com", "password": "Skitraj=12#"}
 
 GET:
 

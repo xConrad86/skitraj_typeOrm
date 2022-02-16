@@ -114,17 +114,14 @@ export default class AuthController {
     let { email, password, phone, birthday } = request.body;
     let birthday_parsed;
     let user = new User();
-    if (birthday) {
-      try {
-        birthday_parsed = new Date(birthday);
-      } catch (error) {
-        response
-          .status(400)
-          .send("Wrong date format. Should be 'YYYY-MM-DD'" + error);
-        return;
-      }
+           
+    if(user.checkDateFormat(birthday)){    
+       birthday_parsed = new Date(birthday);
+    } else {
+       response.status(400).send("Wrong date format. Should be 'YYYY-MM-DD'");
+       return;
     }
-
+        
     user.email = email;
     user.password = password;
     user.phone = phone;

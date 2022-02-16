@@ -8,6 +8,14 @@ import {
 import { IsEmail, MaxLength, MinLength } from "class-validator";
 import * as bcrypt from "bcryptjs";
 import { classToPlain, Exclude } from "class-transformer";
+import * as moment from 'moment';
+
+export enum UserRole {
+  ADMIN = "admin",
+  OWNER = "owner",
+  VIEWER = "viewer"
+}
+
 
 @Entity()
 export class User {
@@ -49,9 +57,12 @@ export class User {
   @Column({ type: "varchar", length: 255, unique: true, nullable: true })
   reset_link!: string;
 
-  @Column({ nullable: true })
-  //@IsNotEmpty()
-  role!: string;
+  @Column({
+    type: "enum",
+    enum: UserRole,
+    default: UserRole.OWNER
+  })
+  role!: UserRole
 
   @Column({ type: "boolean", default: false, nullable: true })
   is_google_acc!: boolean;
@@ -75,6 +86,10 @@ export class User {
 
   toJSON() {
     return classToPlain(this);
+  }
+
+  checkDateFormat(date: Date | string){    
+    return moment(date, 'YYYY-MM-DD',true).isValid()
   }
 
   checkPassword(password: string) {
