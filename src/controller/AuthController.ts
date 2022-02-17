@@ -4,7 +4,8 @@ import { NextFunction, Request, Response } from "express";
 import * as jwt from "jsonwebtoken";
 import config from "../config/config";
 import { validate } from "class-validator";
-import { sendEmail } from "../utils/Functions";
+import { sendEmail } from "../utils/functions";
+import { IRequest } from "../utils/globals";
 
 const passport = require("passport");
 
@@ -30,7 +31,7 @@ export default class AuthController {
   };
 
   static externalLogin = async (
-    request: Request,
+    request: IRequest,
     response: Response,
     next: NextFunction
   ) => {
@@ -111,7 +112,7 @@ export default class AuthController {
     response: Response,
     next: NextFunction
   ) => {
-    let { email, password, phone, birthday } = request.body;
+    let { email, password, phone, birthday, first_name, last_name } = request.body;
     let birthday_parsed;
     let user = new User();
            
@@ -126,6 +127,8 @@ export default class AuthController {
     user.password = password;
     user.phone = phone;
     user.birthday = birthday_parsed as Date;
+    user.first_name = first_name;
+    user.last_name = last_name;
 
     const errors = await validate(user);
     console.log(user, errors);
@@ -158,10 +161,10 @@ export default class AuthController {
     response.status(201).send({ obj });
   };
 
-  static changePassword = async (request: Request, response: Response) => {
+  static changePassword = async (request: IRequest, response: Response) => {
     const id = request.locals.jwtPayload.user_id;
     const { oldPassword, newPassword } = request.body;
-
+    
     if (!(oldPassword && newPassword)) {
       response.status(400).send();
       return;

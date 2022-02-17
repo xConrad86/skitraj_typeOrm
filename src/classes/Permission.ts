@@ -2,7 +2,7 @@ import * as jwt from "jsonwebtoken";
 import { NextFunction, Request, Response } from "express";
 import config from "../config/config";
 import { Response_PL } from "../utils/dictionary";
-import { showError } from "../utils/Functions";
+import { showError } from "../utils/functions";
 
 export const authenticateToken = (
   request: Request,

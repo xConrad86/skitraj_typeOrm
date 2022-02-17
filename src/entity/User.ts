@@ -62,7 +62,7 @@ export class User {
     enum: UserRole,
     default: UserRole.OWNER
   })
-  role!: UserRole
+  role!: UserRole;
 
   @Column({ type: "boolean", default: false, nullable: true })
   is_google_acc!: boolean;

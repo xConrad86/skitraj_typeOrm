@@ -1,20 +1,10 @@
 import { Request, Response, NextFunction } from "express";
 import { getRepository } from "typeorm";
 import { User } from "../entity/User";
-
-declare global {
-  namespace Express {
-    interface Request {
-      //for external auth
-      user: Record<string, any>;
-      //for jwtToken
-      locals: Record<string, any>;
-    }
-  }
-}
+import { IRequest } from "../utils/globals";
 
 export const verifyRoles = (roles: Array<string>) => {
-  return async (request: Request, response: Response, next: NextFunction) => {
+  return async (request: IRequest, response: Response, next: NextFunction) => {
     const id = request.locals.jwtPayload.user_id;
 
     //User role from the database

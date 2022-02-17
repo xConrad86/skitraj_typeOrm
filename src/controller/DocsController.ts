@@ -10,7 +10,7 @@ POST:
 
   normal register:
     url: /auth/register
-    body: {"email": "test@gmail.com", "password": "Skitraj=12#", "phone": "123456789"}
+    body: {"email": "test@gmail.com", "password": "Skitraj=12#", "phone": "123456789", "first_name" : "konrad", "last_name" : "bednarski"}
 
   normal login:
     url: /auth/login

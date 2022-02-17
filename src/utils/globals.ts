@@ -1,3 +1,5 @@
+import * as express from 'express';
+
 export {};
 declare global {
   namespace Express {
@@ -8,4 +10,9 @@ declare global {
       locals: Record<string, any>;
     }
   }
+}
+
+export interface IRequest extends express.Request {
+  user: Record<string, any>;
+  locals: Record<string, any>;
 }
