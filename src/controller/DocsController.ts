@@ -20,6 +20,12 @@ POST:
     url: /auth/reset-password
     body: {"email": "test@gmail.com"}
 
+  test e-mail(remember to provide payload as object):
+    url: /test/mail
+    body: { "email": "konradbednarski8623@gazeta.pl",
+      "payload": {"something": "nothing important"}
+    }  
+
 PATCH:
 
   reset password (token = token from e-mail):
