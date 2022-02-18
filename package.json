@@ -27,6 +27,7 @@
     "passport-google-oauth": "^2.0.0",
     "pg": "^8.4.0",
     "reflect-metadata": "^0.1.13",
+    "swagger-ui-express": "^4.3.0",
     "ts-node-dev": "^1.1.8",
     "typeorm": "^0.2.41"
   },

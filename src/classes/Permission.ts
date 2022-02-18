@@ -10,7 +10,6 @@ export const authenticateToken = (
   next: NextFunction
 ) => {
   const token = <string>request.headers["authorization"];
-  let jwtPayload;
   console.log("verify permisson", token, request.headers);
 
   if (!token) {
@@ -19,7 +18,7 @@ export const authenticateToken = (
   }
   //Validate the jwt token
   try {
-    jwtPayload = <any>jwt.verify(token, config.jwt_secret);
+    let jwtPayload = <any>jwt.verify(token, config.jwt_secret);
   } catch (error) {
     response
       .status(401)

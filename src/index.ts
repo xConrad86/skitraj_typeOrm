@@ -3,8 +3,6 @@ import { createConnection } from "typeorm";
 import Routes from "./routes/Routes";
 import config from "./config/config";
 import { Request, Response, NextFunction } from "express";
-import { AnyAaaaRecord } from "dns";
-
 //import {User} from "./entity/User";
 
 createConnection()
