@@ -36,7 +36,6 @@ export default class AuthController {
     next: NextFunction
   ) => {
     let {email} = request.body;
-    console.log(request.body);
     const userRepository = getRepository(User);
     let user: User;
 
