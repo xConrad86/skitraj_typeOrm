@@ -35,14 +35,10 @@ export default class AuthController {
     response: Response,
     next: NextFunction
   ) => {
-    let email = request.user.emails[0].value;
+    let {email} = request.body;
+    console.log(request.body);
     const userRepository = getRepository(User);
     let user: User;
-
-    if (!email) {
-      response.status(400).send();
-      return;
-    }
 
     try {
       user = (await userRepository.findOne({ where: { email } })) as User;      

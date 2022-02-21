@@ -20,5 +20,5 @@ router.post(
 );
 router.get("/:provider", AuthController.externalAuthRequest);
 router.get("/:provider/callback", AuthController.externalAuthCallback);
-router.get("/:provider/login", AuthController.externalLogin);
+router.post("/:provider/login", AuthController.externalLogin);
 export default router;
