@@ -16,7 +16,6 @@ export enum UserRole {
   VIEWER = "viewer"
 }
 
-
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()

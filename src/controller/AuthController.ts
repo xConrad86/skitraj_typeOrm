@@ -323,7 +323,7 @@ async function resetUserPassword(
       user.hashPassword();
       try {
         await userRepository.save(user);
-      } catch (error: any) {
+      } catch (error) {
         response.status(401).send("Cannot update user.");
         return;
       }
